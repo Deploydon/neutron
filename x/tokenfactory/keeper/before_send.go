@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	types2 "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -174,11 +175,14 @@ func (k Keeper) callBeforeSendListener(ctx context.Context, from, to sdk.AccAddr
 				_, err = k.contractKeeper.Sudo(childCtx, cwAddr, msgBz)
 				c.Logger().Debug(">>> Track before send handler gas consumption", "gas",
 					childCtx.GasMeter().GasConsumed())
+				fmt.Println(">>> Track before send handler gas consumption", "gas",
+					childCtx.GasMeter().GasConsumed())
 				if err != nil {
 					c.Logger().Error(
 						">>> Track before send hook failed",
 						"err", err,
 					)
+					fmt.Println(">>> Track before send hook failed", "err", err)
 					return errorsmod.Wrapf(err, "failed to call before send hook for denom %s", coin.Denom)
 				}
 
