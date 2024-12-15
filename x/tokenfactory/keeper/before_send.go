@@ -173,12 +173,12 @@ func (k Keeper) callBeforeSendListener(ctx context.Context, from, to sdk.AccAddr
 			} else {
 				childCtx := c.WithGasMeter(types2.NewGasMeter(types.TrackBeforeSendGasLimit))
 				_, err = k.contractKeeper.Sudo(childCtx, cwAddr, msgBz)
-				c.Logger().Debug(">>> Track before send handler gas consumption", "gas",
+				c.Logger().Info(">>> Track before send handler gas consumption", "gas",
 					childCtx.GasMeter().GasConsumed())
 				fmt.Println(">>> Track before send handler gas consumption", "gas",
 					childCtx.GasMeter().GasConsumed())
 				if err != nil {
-					c.Logger().Error(
+					c.Logger().Info(
 						">>> Track before send hook failed",
 						"err", err,
 					)
