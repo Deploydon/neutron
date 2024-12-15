@@ -109,6 +109,7 @@ func (k Keeper) callBeforeSendListener(ctx context.Context, from, to sdk.AccAddr
 
 	defer func() {
 		if r := recover(); r != nil {
+			c.Logger().Info(">>> ERROR RECOVERED IN callBeforeSendListener", "recover", r)
 			err = types.ErrTrackBeforeSendOutOfGas
 		}
 	}()
@@ -166,23 +167,21 @@ func (k Keeper) callBeforeSendListener(ctx context.Context, from, to sdk.AccAddr
 
 			// if its track before send, apply gas meter to prevent infinite loop
 			if blockBeforeSend {
+				c.Logger().Info(">>> Calling blockBeforeSend Sudo...")
 				_, err = k.contractKeeper.Sudo(c, cwAddr, msgBz)
 				if err != nil {
 					return errorsmod.Wrapf(err, "failed to call before send hook for denom %s", coin.Denom)
 				}
 			} else {
 				childCtx := c.WithGasMeter(types2.NewGasMeter(types.TrackBeforeSendGasLimit))
+				c.Logger().Info(">>> Track before send handler PRE-SUDO CALL gas consumption", "gas", childCtx.GasMeter().GasConsumed())
 				_, err = k.contractKeeper.Sudo(childCtx, cwAddr, msgBz)
-				c.Logger().Info(">>> Track before send handler gas consumption", "gas",
-					childCtx.GasMeter().GasConsumed())
-				fmt.Println(">>> Track before send handler gas consumption", "gas",
-					childCtx.GasMeter().GasConsumed())
+				c.Logger().Info(">>> Track before send handler POST-SUDO gas consumption", "gas", childCtx.GasMeter().GasConsumed())
 				if err != nil {
 					c.Logger().Info(
 						">>> Track before send hook failed",
 						"err", err,
 					)
-					fmt.Println(">>> Track before send hook failed", "err", err)
 					return errorsmod.Wrapf(err, "failed to call before send hook for denom %s", coin.Denom)
 				}
 
