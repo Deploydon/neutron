@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	types2 "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
