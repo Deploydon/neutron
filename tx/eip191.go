@@ -37,19 +37,11 @@ func (h SignModeEIP191Handler) GetSignBytes(
 	ctx context.Context, data signing.SignerData, txData signing.TxData,
 ) ([]byte, error) {
 	aminoJSONBz, err := h.SignModeHandler.GetSignBytes(ctx, data, txData)
+	fmt.Printf(">> aminoJSONBz: %s", string(aminoJSONBz))
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("TODO: aminoJsonBz: %s", string(aminoJSONBz))
-
-	//srvBz := append(append(
-	//	[]byte(EIP191MessagePrefix),
-	//	[]byte(strconv.Itoa(len(aminoJSONBz)))...,
-	//), aminoJSONBz...)
-
-	//"\x19\x01" ‖ domainSeparator ‖ hashStruct(message)
-
+	
 	srvBz := append(append(
 		[]byte(EIP191MessagePrefix),
 		[]byte(strconv.Itoa(len(aminoJSONBz)))...,
